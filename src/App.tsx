@@ -37,7 +37,11 @@ export default function App() {
           </motion.div>
         ) : (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ width: '100%', height: '100%' }}>
-            <img src="/sector88.jpg" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img 
+  src="/sector88.jpg" 
+  onError={(e) => { e.currentTarget.src = "/sector88.JPG" }} 
+  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+/>
             <div style={{ position: 'absolute', bottom: '10%', left: '8%' }}>
               <h1 style={{ fontSize: 42, margin: 0, textShadow: '0 0 20px #00f2ff' }}>AI SECTOR</h1>
             </div>
