@@ -11,7 +11,7 @@ interface IMenuItem {
   content: string;
 }
 
-// --- WebGL Core ---
+// --- WebGL: Background Core ---
 const Scene = ({ isMobile }: { isMobile: boolean }) => {
   const meshRef = useRef<THREE.Mesh>(null!);
   const texture = useLoader(THREE.TextureLoader, '/sector88.jpg');
@@ -45,7 +45,8 @@ const Scene = ({ isMobile }: { isMobile: boolean }) => {
 
   return (
     <mesh ref={meshRef}>
-      <planeGeometry args={[isMobile ? 3.5 : 6.5, isMobile ? 6 : 3.5]} />
+      {/* Уменьшенный Plane для мобилок, чтобы не выталкивать кнопки */}
+      <planeGeometry args={[isMobile ? 2.5 : 6.5, isMobile ? 4.5 : 3.8]} />
       <shaderMaterial args={[shaderData]} transparent depthWrite={false} />
     </mesh>
   );
@@ -66,6 +67,7 @@ const Typewriter = ({ text }: { text: string }) => {
   return <span>{displayedText}<motion.span animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity }}>_</motion.span></span>;
 };
 
+// --- Main App ---
 export default function App() {
   const [loading, setLoading] = useState(0);
   const [show, setShow] = useState(false);
@@ -102,52 +104,4 @@ export default function App() {
   }, [hold, loading]);
 
   return (
-    <div style={{ width: '100vw', height: '100dvh', background: '#050505', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-      <AnimatePresence mode="wait">
-        {!show ? (
-          <motion.div key="loader" exit={{ opacity: 0 }} style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-            <div 
-              onPointerDown={(e) => { e.preventDefault(); setHold(true); }}
-              onPointerUp={() => setHold(false)}
-              onPointerLeave={() => setHold(false)}
-              style={{ width: 120, height: 120, border: '1px solid #00f2ff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#00f2ff', fontWeight: 900, touchAction: 'none', userSelect: 'none' }}
-            >
-              {loading}%
-            </div>
-          </motion.div>
-        ) : (
-          <motion.div key="main" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ width: '100%', height: '100%', position: 'relative' }}>
-            
-            {/* Background Layer */}
-            <div style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none' }}>
-              <Canvas camera={{ position: [0, 0, 5] }} dpr={[1, 2]}>
-                <Suspense fallback={null}><Scene isMobile={isMobile} /></Suspense>
-              </Canvas>
-            </div>
-
-            {/* UI Layer - Fixed Hierarchy */}
-            <div style={{ position: 'absolute', inset: 0, zIndex: 100, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 'env(safe-area-inset-top) 20px max(40px, env(safe-area-inset-bottom)) 20px', boxSizing: 'border-box' }}>
-              
-              {/* TOP: Branding */}
-              <div style={{ textAlign: 'center', paddingTop: '20px', opacity: activeTab ? 0.2 : 1, transition: '0.4s' }}>
-                <h1 style={{ fontSize: 'clamp(1.8rem, 8vw, 3rem)', margin: 0, fontWeight: 900, color: '#00f2ff' }}>AI SECTOR</h1>
-                <p style={{ fontSize: '0.5rem', opacity: 0.3, letterSpacing: '4px' }}>TERMINAL_ACTIVE</p>
-              </div>
-
-              {/* CENTER: Terminal Display */}
-              <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 0 }}>
-                <AnimatePresence>
-                  {activeTab && (
-                    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                      style={{ background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(20px)', padding: '20px', borderRadius: '12px', border: '1px solid rgba(0,242,255,0.4)', width: '100%', maxWidth: '340px' }}>
-                      <p style={{ fontSize: '0.8rem', lineHeight: '1.6', margin: 0 }}><Typewriter key={activeTab} text={menuItems.find(i => i.id === activeTab)?.content || ''} /></p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* BOTTOM: Buttons (Safe Zone) */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%', alignItems: 'center', paddingBottom: '20px' }}>
-                {menuItems.map(item => (
-                  <button 
-                    key
+    <div style={{ width: '100vw', height: '100dvh', background: '#050505', position: 'relative', overflow: 'hidden', display:
